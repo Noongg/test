@@ -1,6 +1,8 @@
 package com.example.test;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -51,19 +53,47 @@ public class Adapter_img extends RecyclerView.Adapter<Adapter_img.cardViewholder
         ImageView imageView;
         ImageView img_card_back;
         ConstraintLayout constraint_img;
+        float xdown = 0,ydown=0;
         public cardViewholder(@NonNull View itemView) {
             super(itemView);
             imageView=itemView.findViewById(R.id.img_card);
             img_card_back=itemView.findViewById(R.id.img_card_back);
             constraint_img=itemView.findViewById(R.id.constraint_img);
         }
+        @SuppressLint("ClickableViewAccessibility")
         public void change_img(img img){
+
             imageView.setImageResource(img.getResourceImg());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     img_card_back.setVisibility(View.GONE);
 
+                }
+            });
+            constraint_img.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    switch (event.getActionMasked()){
+
+                        case MotionEvent.ACTION_DOWN:
+                            xdown=event.getX();
+                            ydown=event.getY();
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            float movedX,movedY;
+                            movedX=event.getX();
+                            movedY=event.getY();
+
+                            float distanceX=movedX-xdown;
+                            float distanceY=movedY-ydown;
+                            constraint_img.setX(constraint_img.getX()+distanceX);
+                            constraint_img.setY(constraint_img.getY()+distanceY);
+
+                            break;
+                    }
+                    return false;
                 }
             });
         }
